@@ -14,12 +14,15 @@ io.on('connection', function(socket){
     // this makes the server listen for socket emitters - in this case message, so it can emit something to all other connections.
     socket.on('message', function(message) {
         console.log('Message received: '+ message.text);
-        socket.broadcast.emit('message', message); // this broadcasts it to everybody BUT the sender. if you wanted to include the sender too, use io.emit
+        
+        io.emit('message', message);
+        //socket.broadcast.emit('message', message); // this broadcasts it to everybody BUT the sender. if you wanted to include the sender too, use io.emit
     
     })
     
     // emit takes two arguments - first is the event name, which can be anything you want. Second argument is whatever data you want to emit.
     // in this case it is an object, as you can store lots of different things.
+    // when it is just socket.emit (as opposed to socket.broadcast.emit), then it only applies to that individual socket - that individual browser.
     socket.emit('message',{
             text: 'Welcome to the chat application!'
         } )

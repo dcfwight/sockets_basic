@@ -1,4 +1,4 @@
-var socket = io(); <!--this is a function defined when we loaded in the io library.-->
+var socket = io(); //this is a function defined when we loaded in the io library.-->
 
 socket.on('connect', function() {
     console.log('connected to socket.io server');
@@ -8,7 +8,9 @@ socket.on('connect', function() {
 socket.on('message', function(message){
     console.log('New message');
     console.log(message.text);
-    })
+    
+    jQuery('.messages').append('<p>' + message.text + '</p>');// target by class - start with a period - will select all elements with class 'messages'
+    });
 
 // Handles submitting of new message
 
@@ -27,6 +29,6 @@ $form.on('submit', function(event) {
     
     
     
-    $message.val('');
+    $message.val(''); // this is the instructor way of clearing the input field.
     //document.getElementById('message-form').reset(); // this is one way to reset the input field.
 });
