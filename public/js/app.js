@@ -8,8 +8,11 @@ socket.on('connect', function() {
 socket.on('message', function(message){
     console.log('New message');
     console.log(message.text);
+    console.log(message.timeStamp);
     
-    jQuery('.messages').append('<p>' + message.text + '</p>');// target by class - start with a period - will select all elements with class 'messages'
+    var momentTimeStamp = moment.utc(message.timestamp);
+    var momentString = momentTimeStamp.local().format("h:mm a");
+    jQuery('.messages').append('<p><strong>'+momentString + ':</strong> '+ message.text + '</p>');// target by class - start with a period - will select all elements with class 'messages'
     });
 
 // Handles submitting of new message
