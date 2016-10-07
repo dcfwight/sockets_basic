@@ -1,3 +1,7 @@
+var name = getQueryVariable('name') || "Anonymous"; // this gets the query variable assigned to the key 'name'. See js file queryparams.js for details.
+var room = getQueryVariable('room');
+console.log(name +' joined ' + room + ' room');
+
 var socket = io(); //this is a function defined when we loaded in the io library.-->
 
 socket.on('connect', function() {
@@ -10,9 +14,14 @@ socket.on('message', function(message){
     console.log(message.text);
     console.log(message.timeStamp);
     
+    var $message = jQuery('.messages');
     var momentTimeStamp = moment.utc(message.timestamp);
     var momentString = momentTimeStamp.local().format("h:mm a");
-    jQuery('.messages').append('<p><strong>'+momentString + ':</strong> '+ message.text + '</p>');// target by class - start with a period - will select all elements with class 'messages'
+    
+    $message.append('<p><strong>'+ message.name + ' '+ momentString+ '</strong></p>');
+    $message.append('<p>'+message.text +'</p>');
+    // old way of doing similar to above.
+    //jQuery('.messages').append('<p><strong>'+momentString + ':</strong> '+ message.text + '</p>');// target by class - start with a period - will select all elements with class 'messages'
     });
 
 // Handles submitting of new message
@@ -27,6 +36,7 @@ $form.on('submit', function(event) {
     var $message = $form.find('input[name=message]')
     
     socket.emit('message', {
+        name: name,
         text: $message.val() // this is finding a form item with input and an attribute with name of 'message'
         });
     

@@ -28,6 +28,7 @@ io.on('connection', function(socket){
     // in this case it is an object, as you can store lots of different things.
     // when it is just socket.emit (as opposed to socket.broadcast.emit), then it only applies to that individual socket - that individual browser.
     socket.emit('message', {
+            name: "System",
             timestamp: now.valueOf(),
             text: 'Welcome to the chat application!'
         } )
