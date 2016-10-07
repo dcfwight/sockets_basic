@@ -9,3 +9,24 @@ socket.on('message', function(message){
     console.log('New message');
     console.log(message.text);
     })
+
+// Handles submitting of new message
+
+// the $ before the variable name means that this variable stores a jQuery instance of an element. Meaning that the variable has access to the methods.
+var $form = jQuery('#message-form'); // pass a selector to the jQuery - it will select ALL items with those tags, if an id, use  # first.
+
+$form.on('submit', function(event) {
+    event.preventDefault(); // when using sockets or Ajax requests on a form, use preventDefault, because you don't want to submit it the old-fashioned way
+    // by refreshing the page - you handle the form submission on your own
+    
+    var $message = $form.find('input[name=message]')
+    
+    socket.emit('message', {
+        text: $message.val() // this is finding a form item with input and an attribute with name of 'message'
+        });
+    
+    
+    
+    $message.val('');
+    //document.getElementById('message-form').reset(); // this is one way to reset the input field.
+});
