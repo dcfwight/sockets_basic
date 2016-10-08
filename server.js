@@ -14,6 +14,21 @@ var clientInfo = {}; // this is going to be a set of key-value pairs - a library
 io.on('connection', function(socket){
     console.log('user connected via socket.io');
     
+    // disconnect is a built-in method. Takes no arguments
+    socket.on('disconnect', function() {
+        // first check if there is any data for this user - i.e. if they are part of any chat room
+        var userData = clientInfo[socket.id]
+        if (typeof userData !== "undefined") {
+            socket.leave(userData.room); // clientInfo only stores the room against the ID
+            io.to(userData.room).emit('message', {
+                name: "System",
+                text: userData.name + " has left",
+                timestamp: moment().valueOf()
+            });
+            delete clientInfo[socket.id]; //removes the data from the clientInfo library.
+        }
+    });
+    
     // listen out for the joinRoom event.
     socket.on('joinRoom', function(req) {
         clientInfo[socket.id] = req; // this is storing the socket info into the clientInfo library object.
