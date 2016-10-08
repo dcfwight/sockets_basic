@@ -5,8 +5,6 @@ var app = express(); // don't need to pass arguments - just use defaults.
 var http = require('http').Server(app); // this is a new module tells node to start a new server and to use Express app as the boiler plate
 var io = require('socket.io')(http); // this is the format that socket expects - it expects to be passed in the server.
 var moment = require('moment');
-var now = moment();
-
 
 app.use(express.static(__dirname + '/public')) // tells where the server should look for files.
 
@@ -17,8 +15,8 @@ io.on('connection', function(socket){
     // this makes the server listen for socket emitters - in this case message, so it can emit something to all other connections.
     socket.on('message', function(message) {
         console.log('Message received: '+ message.text);
-        console.log('now is: '+ now.format());
-        message.timestamp = now.valueOf(); // adds the javascript timeStamp as an attribute of the message object.            
+        console.log('now is: '+ moment().format());
+        message.timestamp = moment().valueOf(); // adds the javascript timeStamp as an attribute of the message object.            
         io.emit('message', message);
         //socket.broadcast.emit('message', message); // this broadcasts it to everybody BUT the sender. if you wanted to include the sender too, use io.emit
     
@@ -29,7 +27,7 @@ io.on('connection', function(socket){
     // when it is just socket.emit (as opposed to socket.broadcast.emit), then it only applies to that individual socket - that individual browser.
     socket.emit('message', {
             name: "System",
-            timestamp: now.valueOf(),
+            timestamp: moment().valueOf(),
             text: 'Welcome to the chat application!'
         } )
 }); // this allows you to listen for events. First argument is the name of the event.

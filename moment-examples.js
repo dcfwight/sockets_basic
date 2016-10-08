@@ -28,3 +28,11 @@ var timestampMoment = moment.utc(timestamp); // load that point in time up to a 
 console.log(timestampMoment.format("h:mm a")); // format as 11:06am - this is now UTC time - we want local.
 
 console.log(timestampMoment.local().format("h:mm a")); // now formatted as local time.
+
+// this code just shows how moment() creates a moment in time - i.e. it doesn't update.
+var now2 = moment();
+console.log('\nvar now2 created')
+console.log(now2.format('X'));
+setTimeout(function(){
+    console.log(now2.format('X'));
+}, 2000);
