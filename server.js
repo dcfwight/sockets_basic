@@ -8,16 +8,30 @@ var moment = require('moment');
 
 app.use(express.static(__dirname + '/public')) // tells where the server should look for files.
 
+var clientInfo = {}; // this is going to be a set of key-value pairs - a library of rooms that the user has joined.
+
 // this is a listener, which listens out for an individual client connecting to the server. socket in the function is the individual connection
 io.on('connection', function(socket){
     console.log('user connected via socket.io');
+    
+    // listen out for the joinRoom event.
+    socket.on('joinRoom', function(req) {
+        clientInfo[socket.id] = req; // this is storing the socket info into the clientInfo library object.
+        socket.join(req.room); // socket.join IS a built-in method - tells the socket io library to add this socket to a specific room.
+        socket.broadcast.to(req.room).emit('message', {
+            name: "System",
+            text: req.name + ' has joined',
+            timestamp: moment().valueOf()
+        }); // this is now more specialised - broadcasts ONLY to those in that room.
+    });
     
     // this makes the server listen for socket emitters - in this case message, so it can emit something to all other connections.
     socket.on('message', function(message) {
         console.log('Message received: '+ message.text);
         console.log('now is: '+ moment().format());
-        message.timestamp = moment().valueOf(); // adds the javascript timeStamp as an attribute of the message object.            
-        io.emit('message', message);
+        message.timestamp = moment().valueOf(); // adds the javascript timeStamp as an attribute of the message object.
+        io.to(clientInfo[socket.id].room).emit('message', message);
+        //io.emit('message', message); // this emits to ALL people - have since changed it, so that it is just to those in the room.
         //socket.broadcast.emit('message', message); // this broadcasts it to everybody BUT the sender. if you wanted to include the sender too, use io.emit
     
     })

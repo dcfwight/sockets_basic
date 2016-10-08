@@ -6,7 +6,8 @@ function getQueryVariable(variable) {
     for (var i = 0; i < vars.length; i++) {
         var pair = vars[i].split('=');
         if (decodeURIComponent(pair[0]) == variable) {
-            return decodeURIComponent(pair[1]);
+            return decodeURIComponent(pair[1].replace(/\+/g," ")); // this is regex - first argument. / and / mark the begining and end of the regex.
+        // the \is the escape sign which escapes the +. g means global, so it replaces all instances.
         }
     }
     

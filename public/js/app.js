@@ -4,10 +4,19 @@ console.log(name +' joined ' + room + ' room');
 
 var socket = io(); //this is a function defined when we loaded in the io library.-->
 
+$(".room-title").text(room); // this selects all items with class ('room-title' and updates them with the value of the variable room).
+
+// when the socket connects to the server.
 socket.on('connect', function() {
     console.log('connected to socket.io server');
-    })
+    
+    socket.emit('joinRoom', {
+        name: name,
+        room: room
+    }); // joinRoom is an event emitted (it is custom - can be anything)
+});
 
+    
 // this listens to the specific event that you named in server.js (remember, it can be named anything.)
 socket.on('message', function(message){
     console.log('New message');
@@ -20,9 +29,12 @@ socket.on('message', function(message){
     
     $message.append('<p><strong>'+ message.name + ' '+ momentString+ '</strong></p>');
     $message.append('<p>'+message.text +'</p>');
+    
+    
     // old way of doing similar to above.
     //jQuery('.messages').append('<p><strong>'+momentString + ':</strong> '+ message.text + '</p>');// target by class - start with a period - will select all elements with class 'messages'
-    });
+});    
+  
 
 // Handles submitting of new message
 
