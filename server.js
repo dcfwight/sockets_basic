@@ -10,6 +10,32 @@ app.use(express.static(__dirname + '/public')) // tells where the server should 
 
 var clientInfo = {}; // this is going to be a set of key-value pairs - a library of rooms that the user has joined.
 
+// sends currentUsers to provided socket
+function sendCurrentUsers(socket) {
+    var info = clientInfo[socket.id]; // this finds the information relating to that socket id in the clientInfo object
+    var users = [];
+    
+    if (typeof info === 'undefined') {
+        return;
+    } 
+    
+    //LEARN this method Object.keys- returns an array of all the attributes of that object. You can then loop over this array.
+    Object.keys(clientInfo).forEach(function(socketId){
+        var userInfo = clientInfo[socketId];
+        if (info.room === userInfo.room) {
+            users.push(userInfo.name);
+        }
+    });
+    
+    socket.emit('message', {
+        name: "System",
+        text: "Current users: " + users.join(', '),
+        timestamp: moment().valueOf()
+    });
+    
+}
+
+
 // this is a listener, which listens out for an individual client connecting to the server. socket in the function is the individual connection
 io.on('connection', function(socket){
     console.log('user connected via socket.io');
@@ -44,11 +70,19 @@ io.on('connection', function(socket){
     socket.on('message', function(message) {
         console.log('Message received: '+ message.text);
         console.log('now is: '+ moment().format());
-        message.timestamp = moment().valueOf(); // adds the javascript timeStamp as an attribute of the message object.
-        io.to(clientInfo[socket.id].room).emit('message', message);
-        //io.emit('message', message); // this emits to ALL people - have since changed it, so that it is just to those in the room.
-        //socket.broadcast.emit('message', message); // this broadcasts it to everybody BUT the sender. if you wanted to include the sender too, use io.emit
-    
+        
+        // first check if the message sent is equal to '@currentUsers'
+        if (message.text === "@currentUsers")  {
+            sendCurrentUsers(socket);
+        } else {
+            message.timestamp = moment().valueOf(); // adds the javascript timeStamp as an attribute of the message object.
+            io.to(clientInfo[socket.id].room).emit('message', message);
+            //io.emit('message', message); // this emits to ALL people - have since changed it, so that it is just to those in the room.
+            //socket.broadcast.emit('message', message); // this broadcasts it to everybody BUT the sender. if you wanted to include the sender too, use io.emit
+        
+        }
+        
+        
     })
     
     // emit takes two arguments - first is the event name, which can be anything you want. Second argument is whatever data you want to emit.

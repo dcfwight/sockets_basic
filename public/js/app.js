@@ -21,7 +21,7 @@ socket.on('connect', function() {
 socket.on('message', function(message){
     console.log('New message');
     console.log(message.text);
-    console.log(message.timeStamp);
+    console.log(message.timestamp);
     
     var $message = jQuery('.messages');
     var momentTimeStamp = moment.utc(message.timestamp);
