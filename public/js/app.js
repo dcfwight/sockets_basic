@@ -23,12 +23,15 @@ socket.on('message', function(message){
     console.log(message.text);
     console.log(message.timestamp);
     
-    var $message = jQuery('.messages');
+    var $messages = jQuery('.messages');
+    var $message = jQuery('<li class="list-group-item"></li>'); // this is creating a new element using jQuery
+    
     var momentTimeStamp = moment.utc(message.timestamp);
     var momentString = momentTimeStamp.local().format("h:mm a");
     
     $message.append('<p><strong>'+ message.name + ' '+ momentString+ '</strong></p>');
     $message.append('<p>'+message.text +'</p>');
+    $messages.append($message);
     
     
     // old way of doing similar to above.
